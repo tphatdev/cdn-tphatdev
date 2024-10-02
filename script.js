@@ -184,11 +184,6 @@ var swiper = new Swiper(".mySwiper", {
   loop: true, // Lặp lại khi cuộn
 });
 
-
-
-
-
-
 // Drop menu
 document.addEventListener("DOMContentLoaded", function () {
   const toggleDropdown = (btnId, dropdownId) => {
@@ -239,7 +234,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-
 // Caurousel
 document.addEventListener("DOMContentLoaded", () => {
   const carousel = document.getElementById("carousel");
@@ -278,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateCarousel();
 });
-
 
 //Auth
 $(document).ready(function () {
@@ -352,4 +345,3 @@ $(document).ready(function () {
       .getAttribute("content");
   }
 });
-
