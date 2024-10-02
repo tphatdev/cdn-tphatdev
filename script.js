@@ -238,3 +238,118 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
+
+
+// Caurousel
+document.addEventListener("DOMContentLoaded", () => {
+  const carousel = document.getElementById("carousel");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const slides = carousel.children;
+  const totalSlides = slides.length;
+  let currentIndex = 0;
+
+  function updateCarousel() {
+    const offset = -currentIndex * 100;
+    carousel.style.transform = `translateX(${offset}%)`;
+    const thumbnails = document.querySelectorAll("#thumbnails img");
+    thumbnails.forEach((thumb, index) => {
+      thumb.classList.toggle("active", index === currentIndex);
+    });
+    document.getElementById("imageCounter").textContent = currentIndex + 1;
+  }
+
+  prevBtn.addEventListener("click", () => {
+    currentIndex = currentIndex > 0 ? currentIndex - 1 : totalSlides - 1;
+    updateCarousel();
+  });
+
+  nextBtn.addEventListener("click", () => {
+    currentIndex = currentIndex < totalSlides - 1 ? currentIndex + 1 : 0;
+    updateCarousel();
+  });
+
+  document.querySelectorAll("#thumbnails img").forEach((thumb, index) => {
+    thumb.addEventListener("click", () => {
+      currentIndex = index;
+      updateCarousel();
+    });
+  });
+
+  updateCarousel();
+});
+
+
+//Auth
+$(document).ready(function () {
+  const handleAuth = (btn, type, getData, successMsg, errorMsg) => {
+    $(btn).on("click", function (e) {
+      e.preventDefault();
+      const csrfToken = getCsrfToken();
+      const data = getData();
+
+      if (!csrfToken || Object.values(data).some((v) => !v)) {
+        return cuteAlert.fire({
+          icon: "error",
+          text: "Vui lòng điền đầy đủ thông tin! ",
+        });
+      }
+
+      $.ajax({
+        url: "/api/auth",
+        type: "POST",
+        dataType: "json",
+        data: { ...data, type, token: csrfToken },
+        success: function (response) {
+          if (response.status) {
+            cuteAlert
+              .fire({
+                icon: "success",
+                title: successMsg,
+              })
+              .then(() => (window.location.href = "/home"));
+          } else {
+            cuteAlert.fire({
+              icon: "error",
+              text: response.message || errorMsg,
+            });
+          }
+        },
+        error: () =>
+          cuteAlert.fire({
+            icon: "error",
+            title: "Lỗi",
+            text: "Đã xảy ra lỗi. Vui lòng thử lại sau.",
+          }),
+      });
+    });
+  };
+  // Xử lý đăng nhập
+  handleAuth(
+    "#BtnLogin",
+    "login",
+    () => ({ users: $("#users").val(), password: $("#password").val() }),
+    "Đăng nhập thành công",
+    "Thông tin đăng nhập không chính xác."
+  );
+  // Xử lý đăng ký
+  handleAuth(
+    "#BtnRegister",
+    "register",
+    () => ({
+      username: $("#username").val(),
+      pass: $("#pass").val(),
+      repass: $("#repass").val(),
+      fullname: $("#fullname").val(),
+    }),
+    "Đăng ký thành công",
+    "Lỗi khi đăng ký."
+  );
+
+  function getCsrfToken() {
+    return document
+      .querySelector('meta[name="csrf-token"]')
+      .getAttribute("content");
+  }
+});
+
